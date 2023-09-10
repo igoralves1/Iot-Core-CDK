@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { IotToLambdaProps, IotToLambda } from '@aws-solutions-constructs/aws-iot-lambda';
 import * as path from "path";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
@@ -15,6 +16,13 @@ export class IoTProcessingPipelineStack extends cdk.Stack {
       handler: 'handler',
       entry: path.join(__dirname, `/../lambda/index.ts`),
     });
+
+    iotFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["iot:*"],
+        resources: ["*"],
+      })
+    );
 
     const constructProps: IotToLambdaProps = {
       existingLambdaObj: iotFunction,

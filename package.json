@@ -20,11 +20,8 @@
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/aws-lambda-event-sources": "^1.204.0",
-    "@aws-cdk/custom-resources": "^1.204.0",
     "@aws-solutions-constructs/aws-iot-lambda": "^2.44.0",
-    "aws-cdk-lib": "2.33.0",
-    "aws-sdk": "^2.1454.0",
+    "aws-cdk-lib": "^2.33.0",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21"
   }
