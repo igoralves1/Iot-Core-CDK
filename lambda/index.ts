@@ -3,7 +3,7 @@ const iot = new AWS.Iot();
 const CryptoJS = require("crypto-js");
 
 const iotdata = new AWS.IotData({
-  endpoint: "a36pdun6sfz528-ats.iot.ap-south-1.amazonaws.com",
+  endpoint: "alciucqxncdzf-ats.iot.us-east-1.amazonaws.com",
 });
 
 
@@ -85,16 +85,26 @@ export async function handler(event: any, context: any, callback: any) {
 
     await createThing({ thingName: name });
     
-    const { certificateArn, certificatePem, keyPair } =
+    const { certificateArn, certificateId, certificatePem, keyPair } =
       await createCertificates({ setAsActive: true });
 
     const { PublicKey, PrivateKey } = keyPair;
 
+    const certInfo = {
+        'nameThing':name,
+        'certificateArn':certificateArn,
+        'certificateId':certificateId,
+        'certificatePem':certificatePem,
+        'publicKey':PublicKey,
+        'privateKey':PrivateKey,
+    }
+    console.log ('certInfo', certInfo)
+
     const dataToEncrypt = JSON.stringify({ PublicKey, PrivateKey, certificatePem });
 
-    const POLICY_NAME = process.env.POLICY_NAME;
+    // const POLICY_NAME = process.env.POLICY_NAME;
 
-    await attachPolicy({ policyName: POLICY_NAME, target: certificateArn });
+    // await attachPolicy({ policyName: POLICY_NAME, target: certificateArn });
     await attachCertificates({ principal: certificateArn, thingName: name });
 
     // encrypt event using public key and publish

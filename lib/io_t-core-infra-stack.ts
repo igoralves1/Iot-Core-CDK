@@ -15,12 +15,13 @@ export class IoTProcessingPipelineStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, `/../lambda/index.ts`),
+      environment:{"POLICY_NAME":"jkshjdfgsjh"}
     });
 
     iotFunction.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["iot:*"],
-        resources: ["*"],
+        resources: ["*"]
       })
     );
 
