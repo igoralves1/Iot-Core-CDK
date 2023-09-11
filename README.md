@@ -15,3 +15,5 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 
 https://stackoverflow.com/questions/57118082/what-iam-permissions-are-needed-to-use-cdk-deploy
+
+https://gist.github.com/igoralves1/3ae1b17f669312e0fa9000a0ff54b863
