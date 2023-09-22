@@ -6,7 +6,6 @@ const iotdata = new AWS.IotData({
   endpoint: "alciucqxncdzf-ats.iot.us-east-1.amazonaws.com",
 });
 
-
 const publishMqtt = (params: any) =>
   new Promise((resolve, reject) =>
     iotdata.publish(params, (err: any, res: any) => {
@@ -19,15 +18,17 @@ const publishMqtt = (params: any) =>
 
 const publishData = async (topic: string, payload: object) => {
   const messagePayload = JSON.stringify(payload);
-
+  console.log ('messagePayload:', messagePayload)
   const params = {
     topic,
     payload: messagePayload,
     qos: '0',
-  };
+  }
+  console.log ('params:', params)
 
-  const result = await publishMqtt(params);
-  return result;
+  const result = await publishMqtt(params)
+  console.log ('result:', result)
+  return result
 };
 
 const createCertificates = (params: any): Promise<any> =>
@@ -79,8 +80,55 @@ const encryptKeyPair = (dataToEncrypt: string, key: string) => {
   return CryptoJS.AES.encrypt(dataToEncrypt, key).toString();
 };
 
-export async function handler(event: any, context: any, callback: any) {
+const { IoTDataPlaneClient, PublishCommand } = require("@aws-sdk/client-iot-data-plane");
+const clientIoT = new IoTDataPlaneClient({ region: "us-east-1" })
+console.log('🚀 clientIoT', clientIoT)
+
+const fnIoTMqttPublishCommand = async (params: {topic: string, payload: object}) => {
   try {
+    console.log('🚀 START fnIoTMqttPublishCommand')
+    
+    let topic = params.topic
+    console.log('🚀 topic: ', topic)
+    
+    let payload = params.payload
+    console.log('🚀 payload: ', payload)
+    
+    let sendParams = {
+      topic: topic,
+      payload: JSON.stringify(payload),
+      qos: '0'
+    }
+    console.log('🚀 sendParams: ', sendParams)
+    
+    const command = new PublishCommand(sendParams)
+    console.log('🚀 command: ', command)
+
+    const response = await clientIoT.send(command)
+    console.log('🚀 response: ', response)
+
+    return response
+  } catch (error: any) {
+    console.log('🚀 fnIoTMqttPublishCommand - error.stack: ', error.stack)
+    throw error.stack
+  }
+}
+
+export async function handler(event: any) {
+  try {
+
+    const jsb = {
+      topic: "sdkv3/1",
+      payload: {"att": 5}
+    }
+    
+    const resp =  await fnIoTMqttPublishCommand(jsb)
+    console.log('🚀 resp', resp)
+
+
+    return false 
+
+    
     const { name } = event;
 
     await createThing({ thingName: name });
@@ -91,7 +139,7 @@ export async function handler(event: any, context: any, callback: any) {
     const { PublicKey, PrivateKey } = keyPair;
 
     const certInfo = {
-        'nameThing':name,
+        'nameThinencryptedKeyg':name,
         'certificateArn':certificateArn,
         'certificateId':certificateId,
         'certificatePem':certificatePem,
@@ -101,14 +149,15 @@ export async function handler(event: any, context: any, callback: any) {
     console.log ('certInfo', certInfo)
 
     const dataToEncrypt = JSON.stringify({ PublicKey, PrivateKey, certificatePem });
-
+    console.log ('dataToEncrypt:', dataToEncrypt)
     // const POLICY_NAME = process.env.POLICY_NAME;
 
     // await attachPolicy({ policyName: POLICY_NAME, target: certificateArn });
-    await attachCertificates({ principal: certificateArn, thingName: name });
+    // await attachCertificates({ principal: certificateArn, thingName: name });
 
     // encrypt event using public key and publish
-    const encryptedMessage = encryptKeyPair(dataToEncrypt, PublicKey);
+    const encryptedMessage = encryptKeyPair(dataToEncrypt, name);
+    console.log ('encryptedMessage:', encryptedMessage)
 
     const result = await publishData('result/1', { encryptedKey: encryptedMessage });
 
