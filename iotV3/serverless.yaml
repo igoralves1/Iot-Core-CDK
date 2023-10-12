@@ -24,3 +24,9 @@ fnCreateCertificateV3:
       Action:
       - "iot:*"
       Resource: '*'
+
+
+arn:aws:logs:us-east-1:996242555412:log-group:/aws/lambda/fnCreateCertificate:*:*
+Allow: logs:CreateLogStream
+Allow: logs:CreateLogGroup
+Allow: logs:PutLogEvents
