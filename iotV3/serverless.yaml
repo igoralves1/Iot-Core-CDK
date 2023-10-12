@@ -1,0 +1,26 @@
+fnCreateCertificateV3:
+    name: fnCreateCertificateV3
+    handler: fnCreateCertificateV3.fnCreateCertificateV3
+    events:
+    - iot:
+        name: 'fnCreateCertificateV3'
+        sql: "SELECT *, topic() AS topic FROM 'fnCreateCertificateV3/#' "
+    environment:
+      MQTT_ENDPOINT: 'alciucqxncdzf-ats.iot.us-east-1.amazonaws.com'
+    memorySize: 256
+    timeout: 600
+    iamRoleStatementsName: 'iamcreatethingV3'
+    iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+      - 'logs:CreateLogGroup'
+      - 'logs:CreateLogStream'
+      - 'logs:PutLogEvents'
+      - 'ec2:CreateNetworkInterface'
+      - 'ec2:DescribeNetworkInterfaces'
+      - 'ec2:DeleteNetworkInterfaces'
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+      - "iot:*"
+      Resource: '*'
