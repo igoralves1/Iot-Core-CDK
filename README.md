@@ -33,3 +33,8 @@ https://stackoverflow.com/questions/57118082/what-iam-permissions-are-needed-to-
   },
   input: { topic: 'sdkv3/1', payload: '{"att":5}', qos: '0' }
 }
+
+
+
+
+https://gist.github.com/igoralves1/2fe0e4cfbbff008b18f674fdb722ab2e
